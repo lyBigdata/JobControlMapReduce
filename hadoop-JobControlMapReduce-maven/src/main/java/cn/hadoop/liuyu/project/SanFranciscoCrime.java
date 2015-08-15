@@ -171,16 +171,13 @@ public class SanFranciscoCrime extends MapReduceJobBase  implements Tool {
 	}
 	
 	public int run(String[] args) throws Exception {
+		// 任务1
 		Configuration conf1 = new Configuration();
-
 		Path out1 = new Path(args[1]);
-		
 		FileSystem hdfs1 = out1.getFileSystem(conf1);
 		if (hdfs1.isDirectory(out1)) {
 			hdfs1.delete(out1, true);
 		}
-		
-		// 任务1
 		Job job1 =  Job.getInstance(conf1);
 		job1.setJarByClass(SanFranciscoCrime.class);
 
@@ -191,6 +188,7 @@ public class SanFranciscoCrime extends MapReduceJobBase  implements Tool {
 		
 		FileInputFormat.addInputPath(job1, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job1, new Path(args[1]));
+		
 		// 任务2
 		Configuration conf2 = new Configuration();
 		Path out2 = new Path(args[2]);
@@ -242,7 +240,11 @@ public class SanFranciscoCrime extends MapReduceJobBase  implements Tool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		int ec = ToolRunner.run(new Configuration(), new SanFranciscoCrime(), args);
+		String[] args0 = {
+                "hdfs://master:9000/middle/crime/crime.csv",
+                "hdfs://master:9000/middle/test/out1/",
+                "hdfs://master:9000/middle/test/out2/" };
+		int ec = ToolRunner.run(new Configuration(), new SanFranciscoCrime(), args0);
 		System.exit(ec);
 	}
 }

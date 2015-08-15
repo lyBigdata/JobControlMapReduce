@@ -164,7 +164,6 @@ public class SanFranciscoCrimePrepOlap extends MapReduceJobBase implements Tool 
 	}
 
 	public int run(String[] arg0) throws Exception {
-		// TODO Auto-generated method stub
 		Configuration conf = new Configuration();
 
 		Path out = new Path(arg0[3]);
@@ -190,13 +189,18 @@ public class SanFranciscoCrimePrepOlap extends MapReduceJobBase implements Tool 
 	}
 
 	public static void main(String[] args) throws Exception {
-		if (args.length == 4) {
+		String[] args0 = {
+                "hdfs://master:9000/middle/crime/crime.csv",
+                "hdfs://master:9000/middle/test/out1/part-r-00000",
+                "hdfs://master:9000/middle/test/out2/part-r-00000",
+                "hdfs://master:9000/middle/test/out3/"};
+		if (args0.length == 4) {
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(URI.create("hdfs://master:9000"), conf);
 			//调用setup
-			setup(args[1], args[2],fs);
+			setup(args0[1], args0[2],fs);
 			//执行MapReduce任务
-			int ec = ToolRunner.run(conf, new SanFranciscoCrimePrepOlap(), args);
+			int ec = ToolRunner.run(conf, new SanFranciscoCrimePrepOlap(), args0);
 			System.exit(ec);
 		} else {
 			System.err.println("\nusage: bin/hadoop jar sfcrime.hadoop.mapreduce.jobs-0.0.1-SNAPSHOT.jar SanFranciscoCrimePrepOlap path/to/category/report path/to/district/report path/to/input/data path/to/output/data");

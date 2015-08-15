@@ -31,7 +31,7 @@ public abstract class DataFile {
     public static List<String> extractKeys(String fn,FileSystem fs) throws IOException {
     	FSDataInputStream in = fs.open(new Path(fn));//打开文件，作为输入流
     	List<String> retVal = new ArrayList<String>();//新建存储key值的集合list
-    	////BufferedReader从字符输入流中读取文本，缓冲各个字符，从而提供字符、数组和行的高效读取
+    	//BufferedReader从字符输入流中读取文本，缓冲各个字符，从而提供字符、数组和行的高效读取
     	BufferedReader br = new BufferedReader(new InputStreamReader(in));
     	String line = br.readLine();//按行读取数据
     	while  (line != null) {//判断数据是否读取完毕

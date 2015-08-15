@@ -27,20 +27,14 @@ import org.apache.hadoop.fs.Path;
  * @function 从 MapReduce 任务中，提取数据，插入到mysql数据库
  */
 public class LoadStarDB {
-
 	private Connection db = null;//mysql数据库连接
-
 	private Map<String, Integer> lastPrimaryKey = new HashMap<String, Integer>();
-
 	private List<String> categories = null;//犯罪类别list
-
 	private List<String> districts = null;//犯罪区域list
 	
 	//映射date主键的关系
 	private final java.util.Map<Date, Integer> timeperiodLookup = new HashMap<Date, Integer>();
-
 	private final DateFormat df = new SimpleDateFormat("MM/dd/yyyy");//插入数据库的日期格式
-
 	private final DateFormat kdf = new SimpleDateFormat("yyyy/MM/dd");//从map/reduce任务输出文件中，解析出此日期
 
 	/***
@@ -51,6 +45,7 @@ public class LoadStarDB {
 	 * @throws SQLException
 	 */
 	private int insert(String table, DataRecord row) throws SQLException {
+		//Statement 是 Java 执行数据库操作的一个重要方法，用于在已经建立数据库连接的基础上，向数据库发送要执行的SQL语句
 		int retVal = 0;
 		Statement s = db.createStatement();
 		StringBuffer sql = new StringBuffer();
@@ -199,12 +194,12 @@ public class LoadStarDB {
 	 * @throws SQLException* 
 	 * @throws IOException
 	 */
-	private LoadStarDB(String categoryReport, String districtReport,
+	public LoadStarDB(String categoryReport, String districtReport,
 			String dbhost, String dbname, String dbuser, String dbpassword,FileSystem fs)
 			throws ClassNotFoundException, SQLException, IOException {
 		Class.forName("com.mysql.jdbc.Driver");
 		String cs = MessageFormat
-				.format("jdbc:mysql://192.168.1.34:3306/test?user=root&password=root&autoReconnect=true",
+				.format("jdbc:mysql://192.168.138.128:3306/HadoopTest?user=root&password=12035318&autoReconnect=true",
 						new Object[] { dbhost, dbname, dbuser, dbpassword });
 		db = DriverManager.getConnection(cs);
 		reset();
@@ -254,7 +249,15 @@ public class LoadStarDB {
 	 * @param args 
 	 * @throws IOException 
 	 * */
-	public static void main(String[] args0) throws IOException {
+	public static void main(String[] args) throws IOException {
+		String[] args0 = {
+                "hdfs://master:9000/middle/crime/out1/part-r-00000",
+                "hdfs://master:9000/middle/crime/out2/part-r-00000",
+                "hdfs://master:9000/middle/crime/out3/part-r-00000",
+                "192.168.138.128:3306",
+                "HadoopTest",
+                "root",
+                "12035318"};
 		if (args0.length == 7) {
 			Configuration conf = new Configuration();
 			FileSystem fs = FileSystem.get(URI.create("hdfs://master:9000"), conf);
@@ -278,7 +281,8 @@ public class LoadStarDB {
 	/*** 
 	 * 生成一条数据记录
 	 */
-	class DataRecord extends HashMap<String, Object> {
+	
+	public class DataRecord extends HashMap<String, Object> {
 		@Override
 		public String toString() {
 			StringBuffer retVal = new StringBuffer();
